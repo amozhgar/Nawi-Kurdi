@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Input, Space, Pagination } from "antd";
 import "antd/dist/antd.css";
-
+const superagent = require("superagent");
 const { Search } = Input;
 
 const onSearch = (value) => console.log(value);
 
 function App() {
-  const superagent = require("superagent");
   const [naw, setNaw] = useState([]);
   const [search, setSearch] = useState("");
   const [total, setTotal] = useState("");
@@ -15,22 +14,14 @@ function App() {
   const [nawPerPage, setNawPerPage] = useState(9);
 
   const fetchData = async () => {
-    await fetch("https://nawikurdi.com/api?limit=100&offset=1")
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setNaw(data.names);
-        setTotal(data.names.length);
+    await superagent
+      .get("https://nawikurdi.com/api")
+      .query({ limit: "100", offset: "1" })
+      .then((res) => {
+        setNaw(res.body.names);
+        setTotal(res.body.names.length);
       });
   };
-
-  // superagent
-  //   .get("https://nawikurdi.com/api?limit=100&offset=1")
-  //   .query({ query: "?limit=100", range: "&offset=1" })
-  //   .then((res) => {
-  //     res.body();
-  //   });
 
   useEffect(() => {
     fetchData();
@@ -83,17 +74,6 @@ function App() {
                 </Col>
               ))
           : null}
-
-        {/* <Col span={8}>
-          <Card title="Card title" bordered={false}>
-            Card content
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card title="Card title" bordered={false}>
-            Card content
-          </Card>
-        </Col> */}
       </Row>
       <br />
       <br />
